@@ -26,7 +26,7 @@ jobs:
       - name: Build binary and source distribution
         run: uv build
 
-      - name: Publish to PyPI on tag
+      - name: Publish to PyPI
         run: |
           uv publish --no-progress \
           ${{ github.ref_type != 'tag' && '--dry-run' || '' }} \
