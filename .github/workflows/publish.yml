@@ -27,5 +27,9 @@ jobs:
         run: uv build
 
       - name: Publish to PyPI on tag
-        if: ${{ github.ref_type == 'tag' }}
-        run: uv publish --no-progress --trusted-publishing=always dist/*
+        if: ${{  }}
+        run: |
+          uv publish --no-progress \
+          ${{ github.ref_type != 'tag' && '--dry-run' || '' }} \
+          --trusted-publishing=always \
+          dist/*
