@@ -1,0 +1,136 @@
+[project]
+name = "fastsse"
+description = "SSE extension for FastAPI"
+license = {file = "LICENSE"}
+authors = [
+    { name = "Philip Meier", email = "github.pmeier@posteo.de" },
+]
+readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.128",
+    "pydantic>=2,<3",
+    "sse-starlette>=3,<4",
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/pmeier/fastsse"
+
+[dependency-groups]
+lint = [
+    "mypy==1.19.*",
+    "pre-commit>=4.5,<5",
+]
+test = [
+    "pytest>=9",
+    "pytest-cov>=7.1.0",
+]
+dev = [
+    "hatch",
+    "uv-dynamic-versioning",
+    {include-group = "lint"},
+    {include-group = "test"},
+]
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[[tool.uv.cache-keys]]
+file = "pyproject.toml"
+
+[[tool.uv.cache-keys]]
+git = { commit = true, tags = true }
+
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+#strict = true
+ignore_untracked = true
+
+[tool.hatch.build.hooks.version]
+path = "src/fastsse/_version.py"
+template = '''
+__version__ = "{version}"
+'''
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+pydocstyle = { convention = "google" }
+select = [
+    "E",
+    "F",
+    "I001",
+    "B",
+    "C4",
+    "ISC",
+    "RET",
+    "SIM",
+    "PTH",
+    "D2",
+    "UP",
+    "ASYNC",
+    "RUF",
+]
+ignore = [
+    # Conflicts with ruff formatter
+    "ISC001",
+    # Ignore line too long, because due to ruff, the error can only occur for strings
+    "E501",
+    # cache has its purpose
+    "B019",
+    # built-in open() is well understood
+    "PTH123",
+    # mutually-exclusive with D211
+    "D203",
+    # mutually-exclusive with D212
+    "D213",
+]
+
+[tool.mypy]
+files = "src"
+
+show_error_codes = true
+pretty = true
+
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+allow_redefinition = true
+no_implicit_optional = true
+
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-ra", "--tb=short"]
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::ResourceWarning",
+]
+xfail_strict = true
